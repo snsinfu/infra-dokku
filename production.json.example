@@ -1,0 +1,11 @@
+{
+  "domain":          "",
+  "server_location": "",
+  "server_type":     "",
+  "server_image":    "",
+  "state_bucket":    "",
+  "mackerel_apikey": "",
+  "primary_pubkey":  "",
+  "admin_user":      "",
+  "ssh_port":        ""
+}

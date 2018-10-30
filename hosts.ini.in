@@ -1,0 +1,1 @@
+dokku ansible_user=${admin_user} ansible_host=${server_address} ansible_port=${ssh_port}

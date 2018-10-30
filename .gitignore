@@ -1,0 +1,10 @@
+.terraform
+*.retry
+_*.ok
+
+.env
+production.json
+certs/
+
+hosts.ini
+known_hosts
