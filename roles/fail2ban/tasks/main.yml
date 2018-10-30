@@ -1,0 +1,17 @@
+- name: fail2ban is installed
+  apt:
+    name: fail2ban
+    state: present
+
+- name: fail2ban is configured
+  template:
+    src: jail.local.j2
+    dest: /etc/fail2ban/jail.local
+  notify:
+    - reload fail2ban
+
+- name: fail2ban is activated
+  service:
+    name: fail2ban
+    state: started
+    enabled: yes

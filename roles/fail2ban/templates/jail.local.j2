@@ -1,0 +1,9 @@
+[DEFAULT]
+ignoreip = {{ unblocked_ips | join(", ") }}
+
+[sshd]
+enabled = true
+port = {{ ssh_port }}
+findtime = 1000
+maxretry = 5
+bantime = 10000
