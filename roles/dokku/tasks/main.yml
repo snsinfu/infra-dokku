@@ -30,10 +30,12 @@
     vtype: string
     value: "{{ ansible_fqdn }}"
 
-- name: dokku uses primary ssh key as an admin key
-  shell: head -n1 /root/.ssh/authorized_keys > /root/.ssh/id_rsa.pub
-  args:
-    creates: /root/.ssh/id_rsa.pub
+- name: dokku is configured to skip initial ssh key setup
+  debconf:
+    name: dokku
+    question: dokku/skip_key_file
+    vtype: boolean
+    value: true
 
 - name: dokku is installed
   apt:
@@ -54,3 +56,14 @@
     name: dokku
     groups: ssh_users
     append: yes
+
+- name: check primary ssh key
+  shell: |
+    hash="$(ssh-keygen -lf /root/.ssh/authorized_keys | awk 'NR == 1 { print $2 }')"
+    fgrep "FINGERPRINT=${hash}" /home/dokku/.ssh/authorized_keys || true
+  register: dokku_keycheck
+  changed_when: none
+
+- name: dokku uses primary ssh key as an admin key
+  shell: head -n1 /root/.ssh/authorized_keys | dokku ssh-keys:add admin
+  when: dokku_keycheck.stdout == ""
