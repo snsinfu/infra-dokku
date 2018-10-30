@@ -16,7 +16,7 @@
       tags: ["dokku"]
 
     - role: dokku-nginx
-      tags: ["dokku", "nginx"]
+      tags: ["dokku-nginx"]
 
     - role: mackerel
       tags: ["mackerel"]
