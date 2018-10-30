@@ -10,15 +10,15 @@
 
 - name: nginx is configured as ssl reverse proxy
   copy:
-    src: nginx-https-reverse-proxy.conf
-    dest: /etc/nginx/conf.d/00-https-reverse-proxy.conf
+    src: 00-https-reverse-proxy.conf
+    dest: /etc/nginx/conf.d/
   notify:
     - reload nginx
 
 - name: nginx default vhost is blocked
   copy:
-    src: nginx-block-default-vhost.conf
-    dest: /etc/nginx/conf.d/00-block-default-vhost.conf
+    src: 00-block-default-vhost.conf
+    dest: /etc/nginx/conf.d/
   notify:
     - reload nginx
 
