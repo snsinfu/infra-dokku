@@ -1,213 +1,22 @@
-- hosts: all
+- hosts: dokku
+
   become: yes
 
-  tasks:
+  roles:
+    - role: packages
+      tags: ["packages"]
 
-    # Packaging
+    - role: firewall
+      tags: ["firewall"]
 
-    - name: apt cache is up to date
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
+    - role: docker
+      tags: ["docker"]
 
-    - name: apt packages are up to date
-      apt:
-        upgrade: yes
+    - role: dokku
+      tags: ["dokku"]
 
-    - name: apt https repository requirements are satisfied
-      apt:
-        name:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - gnupg2
-          - software-properties-common
-        state: present
+    - role: dokku-nginx
+      tags: ["dokku", "nginx"]
 
-    # Firewall
-
-    - name: firewall scripts present
-      template:
-        src: "config/{{ item }}.j2"
-        dest: "/etc/{{ item }}"
-        mode: 0744
-      with_items:
-        - ipv4_firewall.sh
-        - ipv6_firewall.sh
-
-    - name: firewall services present
-      copy:
-        src: "config/{{ item }}"
-        dest: /etc/systemd/system/
-      with_items:
-        - ipv4_firewall.service
-        - ipv6_firewall.service
-
-    - name: firewall services are activated
-      service:
-        name: "{{ item }}"
-        state: started
-        enabled: yes
-      with_items:
-        - ipv4_firewall
-        - ipv6_firewall
-      notify:
-        - restart docker
-
-    # Docker
-    # https://docs.docker.com/install/linux/docker-ce/debian/
-
-    - name: docker repository key is registered
-      apt_key:
-        id: 9dc858229fc7dd38854ae2d88d81803c0ebfcd88
-        url: https://download.docker.com/linux/debian/gpg
-        state: present
-
-    - name: docker repository is registered
-      apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_lsb.codename }} stable
-        state: present
-
-    - name: docker is installed
-      apt:
-        name: docker-ce
-        state: present
-
-    - name: docker is activated
-      service:
-        name: docker
-        state: started
-        enabled: yes
-
-    # Dokku
-
-    - name: packagecloud repository key is registered
-      apt_key:
-        id: 418a7f2fb0e1e6e7eabf6fe8c2e73424d59097ab
-        url: https://packagecloud.io/gpg.key
-        state: present
-
-    - name: dokku repository is registered
-      apt_repository:
-        repo: deb https://packagecloud.io/dokku/dokku/debian/ {{ ansible_lsb.codename }} main
-        state: present
-
-    - name: dokku web configuration is disabled
-      debconf:
-        name: dokku
-        question: dokku/web_config
-        vtype: boolean
-        value: false
-
-    - name: dokku is configured to use vhost
-      debconf:
-        name: dokku
-        question: dokku/vhost_enable
-        vtype: boolean
-        value: true
-
-    - name: dokku host is set
-      debconf:
-        name: dokku
-        question: dokku/hostname
-        vtype: string
-        value: "{{ ansible_fqdn }}"
-
-    - name: dokku primary ssh key is copied from authorized_keys
-      shell: head -n1 /root/.ssh/authorized_keys > /root/.ssh/id_rsa.pub
-      args:
-        creates: /root/.ssh/id_rsa.pub
-
-    - name: dokku is installed
-      apt:
-        name: dokku
-        state: present
-
-    - name: dokku plugins are installed
-      command: dokku plugin:install "{{ item.url }}" "{{ item.name }}"
-      args:
-        creates: "/var/lib/dokku/plugins/available/{{ item.name }}"
-      with_items:
-        - { url: "https://github.com/dokku/dokku-postgres.git", name: postgres }
-        - { url: "https://github.com/dokku/dokku-redis.git", name: redis }
-        - { url: "https://github.com/dokku/dokku-rethinkdb.git", name: rethinkdb }
-
-    - name: dokku user may use ssh
-      user:
-        name: dokku
-        groups: ssh_users
-        append: yes
-
-    # Nginx / SSL certs
-
-    - name: nginx ssl certificate is present
-      copy:
-        src: "{{ item }}"
-        dest: /etc/nginx/ssl/
-      with_items:
-        - certs/origin.cert
-        - certs/origin.key
-      notify:
-        - reload nginx
-
-    - name: nginx is configured as ssl reverse proxy
-      copy:
-        src: config/nginx-https-reverse-proxy.conf
-        dest: /etc/nginx/conf.d/00-https-reverse-proxy.conf
-      notify:
-        - reload nginx
-
-    - name: nginx default vhost is blocked
-      copy:
-        src: config/nginx-default-vhost.conf
-        dest: /etc/nginx/conf.d/00-default-vhost.conf
-      notify:
-        - reload nginx
-
-    - name: nginx default site is disabled
-      file:
-        path: /etc/nginx/sites-enabled/default
-        state: absent
-      notify:
-        - reload nginx
-
-    # Mackerel
-
-    - name: mackerel repository key is registered
-      apt_key:
-        id: 9dd9479d06baa71322803ac166332b78417e73ea
-        url: https://mackerel.io/file/cert/GPG-KEY-mackerel-v2
-        state: present
-
-    - name: mackerel repository is registered
-      apt_repository:
-        repo: deb http://apt.mackerel.io/v2/ mackerel contrib
-        state: present
-
-    - name: mackerel-agent is installed
-      apt:
-        name: mackerel-agent
-        state: present
-
-    - name: mackerel-agent is configured
-      template:
-        src: config/mackerel-agent.conf.j2
-        dest: /etc/mackerel-agent/mackerel-agent.conf
-
-    #- name: mackerel-agent is activated
-    #  service:
-    #    name: mackerel-agent
-    #    state: started
-    #    enabled: yes
-
-  handlers:
-
-    - name: restart docker
-      service:
-        name: docker
-        state: restarted
-
-    - name: reload nginx
-      service:
-        name: nginx
-        state: reloaded
+    - role: mackerel
+      tags: ["mackerel"]

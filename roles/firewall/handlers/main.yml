@@ -1,0 +1,5 @@
+# Docker adds undocumented set of iptables rules.
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
