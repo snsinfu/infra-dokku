@@ -1,5 +1,5 @@
 data "template_file" "ansible_inventory" {
-  template = "${file("hosts.ini.in")}"
+  template = "${file("files/hosts.ini.in")}"
 
   vars {
     server_address = "${hcloud_server.dokku.ipv4_address}"

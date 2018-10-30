@@ -17,7 +17,7 @@ TF_INIT_OPTIONS = \
   -backend-config bucket=$$(scripts/var state_bucket)
 
 TF_OPTIONS = \
-  -var-file production.json
+  -var-file production/config.json
 
 
 .PHONY: all clean destroy ssh
@@ -43,8 +43,8 @@ _server.ok: _init.ok
 	@touch $@
 
 _provision.ok: _server.ok hosts.ini provision.yml
-	ansible-playbook -e @production.json provision.yml
+	ansible-playbook -e @production/config.json provision.yml
 	@touch $@
 
-hosts.ini: _server.ok hosts.ini.in
+hosts.ini: _server.ok files/hosts.ini.in
 	terraform output ansible_inventory > $@

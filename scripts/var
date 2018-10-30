@@ -1,3 +1,3 @@
 #!/bin/sh -eu
 
-jq -r ".$1" < production.json
+jq -r ".$1" < production/config.json

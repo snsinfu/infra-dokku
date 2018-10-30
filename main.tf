@@ -19,7 +19,7 @@ resource "hcloud_ssh_key" "primary" {
 }
 
 data "template_file" "cloudinit" {
-  template = "${file("cloudinit.yml.in")}"
+  template = "${file("files/cloudinit.yml.in")}"
   vars {
     admin_user = "${var.admin_user}"
     ssh_port   = "${var.ssh_port}"
