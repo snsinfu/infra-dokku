@@ -30,12 +30,10 @@
     vtype: string
     value: "{{ ansible_fqdn }}"
 
-- name: dokku is configured to skip initial key setup
-  debconf:
-    name: dokku
-    question: dokku/skip_key_file
-    vtype: boolean
-    value: true
+- name: dokku uses primary ssh key as an admin key
+  shell: head -n1 /root/.ssh/authorized_keys > /root/.ssh/id_rsa.pub
+  args:
+    creates: /root/.ssh/id_rsa.pub
 
 - name: dokku is installed
   apt:
