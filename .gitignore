@@ -3,8 +3,7 @@
 _*.ok
 
 .env
-production.json
-certs/
+production/
 
 hosts.ini
 known_hosts
