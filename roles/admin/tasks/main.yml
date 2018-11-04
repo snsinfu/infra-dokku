@@ -4,3 +4,10 @@
     key: "{{ item }}"
     state: present
   loop: "{{ admin_pubkeys }}"
+
+- name: admin tools are installed
+  apt:
+    name:
+      - htop
+      - tmux
+    state: present
