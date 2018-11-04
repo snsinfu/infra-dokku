@@ -60,13 +60,14 @@
     groups: ssh_users
     append: yes
 
-- name: check primary ssh key
-  shell: |
-    hash="$(ssh-keygen -lf /root/.ssh/authorized_keys | awk 'NR == 1 { print $2 }')"
-    fgrep "FINGERPRINT=${hash}" /home/dokku/.ssh/authorized_keys || true
-  register: dokku_keycheck
-  changed_when: none
+- name: dokku recognizes primary key
+  shell: dokku ssh-keys:remove admin; echo "{{ primary_pubkey }}" | dokku ssh-keys:add admin
 
-- name: dokku uses primary ssh key as an admin key
-  shell: head -n1 /root/.ssh/authorized_keys | dokku ssh-keys:add admin
-  when: dokku_keycheck.stdout == ""
+- name: dokku extra admin keys are removed
+  shell: dokku ssh-keys:list | grep -Eo "\badmin[[:digit:]]+" | xargs -rL1 dokku ssh-keys:remove
+
+- name: dokku extra admin keys are inserted
+  shell: echo "{{ primary_pubkey }}" | dokku ssh-keys:add "admin{{ index + 1 }}"
+  loop: "{{ admin_pubkeys }}"
+  loop_control:
+    index_var: index

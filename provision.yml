@@ -6,6 +6,9 @@
     - role: packages
       tags: ["packages"]
 
+    - role: admin
+      tags: ["admin"]
+
     - role: firewall
       tags: ["firewall"]
 
