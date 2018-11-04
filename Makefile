@@ -10,11 +10,11 @@ SSH_OPTIONS = \
   -o UserKnownHostsFile=known_hosts \
   -o PasswordAuthentication=no \
   -o IdentitiesOnly=yes \
-  -p $$(scripts/get ssh_port) \
-  -l $$(scripts/get admin_user)
+  -p $$(production/get ssh_port) \
+  -l $$(production/get admin_user)
 
 TF_INIT_OPTIONS = \
-  -backend-config bucket=$$(scripts/get state_bucket)
+  -backend-config bucket=$$(production/get state_bucket)
 
 TF_OPTIONS = \
   -var-file production/config.json
