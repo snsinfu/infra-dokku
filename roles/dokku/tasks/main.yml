@@ -62,7 +62,7 @@
   shell: dokku ssh-keys:remove admin; echo "{{ primary_pubkey }}" | dokku ssh-keys:add admin
 
 - name: dokku extra admin keys are removed
-  shell: dokku ssh-keys:list | grep -Eo "\badmin[[:digit:]]+" | xargs -rL1 dokku ssh-keys:remove
+  shell: dokku ssh-keys:list | grep -Eo "\badmin[0-9]+" | xargs -rL1 dokku ssh-keys:remove
 
 - name: dokku extra admin keys are inserted
   shell: echo "{{ primary_pubkey }}" | dokku ssh-keys:add "admin{{ index + 1 }}"
