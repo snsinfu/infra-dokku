@@ -42,7 +42,10 @@
     name: dokku
     state: present
 
-- name: dokku plugins are installed
+- name: dokku plugin dependencies are installed
+  command: dokku plugin:install-dependencies --core
+
+- name: dokku additional plugins are installed
   command: dokku plugin:install "{{ item.url }}" "{{ item.name }}"
   args:
     creates: "/var/lib/dokku/plugins/available/{{ item.name }}"
