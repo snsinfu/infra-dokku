@@ -49,7 +49,7 @@
   command: dokku plugin:install "{{ item.url }}" "{{ item.name }}"
   args:
     creates: "/var/lib/dokku/plugins/available/{{ item.name }}"
-  with_items:
+  loop:
     - { url: "https://github.com/dokku/dokku-postgres.git", name: postgres }
 
 - name: dokku user may use ssh

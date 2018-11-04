@@ -3,7 +3,7 @@
     src: "{{ item }}.j2"
     dest: "/etc/{{ item }}"
     mode: 0744
-  with_items:
+  loop:
     - ipv4_firewall.sh
     - ipv6_firewall.sh
 
@@ -11,7 +11,7 @@
   copy:
     src: "{{ item }}"
     dest: /etc/systemd/system/
-  with_items:
+  loop:
     - ipv4_firewall.service
     - ipv6_firewall.service
 
@@ -20,7 +20,7 @@
     name: "{{ item }}"
     state: started
     enabled: yes
-  with_items:
+  loop:
     - ipv4_firewall
     - ipv6_firewall
   notify:

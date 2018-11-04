@@ -2,7 +2,7 @@
   copy:
     src: "{{ item }}"
     dest: /etc/nginx/ssl/
-  with_items:
+  loop:
     - production/origin.cert
     - production/origin.key
   notify:

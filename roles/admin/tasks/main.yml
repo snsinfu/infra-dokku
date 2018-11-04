@@ -1,0 +1,6 @@
+- name: admin keys are inserted
+  authorized_key:
+    user: "{{ admin_user }}"
+    key: "{{ item }}"
+    state: present
+  loop: "{{ admin_pubkeys }}"
