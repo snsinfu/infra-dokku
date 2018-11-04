@@ -6,7 +6,7 @@
   "state_bucket":    "",
   "mackerel_apikey": "",
   "primary_pubkey":  "",
-  "extra_pubkeys":   [],
+  "admin_pubkeys":   [],
   "admin_user":      "",
   "ssh_port":        "",
   "unblocked_ips":   ["127.0.0.0/8"]
