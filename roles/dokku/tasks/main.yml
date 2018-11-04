@@ -51,8 +51,6 @@
     creates: "/var/lib/dokku/plugins/available/{{ item.name }}"
   with_items:
     - { url: "https://github.com/dokku/dokku-postgres.git", name: postgres }
-    - { url: "https://github.com/dokku/dokku-redis.git", name: redis }
-    - { url: "https://github.com/dokku/dokku-rethinkdb.git", name: rethinkdb }
 
 - name: dokku user may use ssh
   user:
